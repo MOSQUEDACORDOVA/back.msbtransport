@@ -15,70 +15,27 @@ class UserController extends Controller
      */
     public function index(Request $request)
     {
-        //
         try {
             // Obtener los parámetros de paginación de la solicitud
-            $page = $request->query('page', 1); // Número de página, predeterminado es 1
             $perPage = $request->query('perPage', 10); // Cantidad de elementos por página, predeterminado es 10
-    
-            // Calcular el índice de inicio para la consulta
-            $startIndex = ($page - 1) * $perPage;
-    
-            // Obtener los registros paginados, 
-            // Ordenados por fecha de creación de forma descendente
-            $Users = User::offset($startIndex)->limit($perPage)->get();
-
-    
-            // Retornar una respuesta con las ofertas de empleo paginadas
-            return response()->json(['data' => $Users], 200);
+        
+            // Obtener los registros paginados automáticamente
+            $users = User::paginate($perPage);
+        
+            // Retornar la respuesta paginada
+            return response()->json($users, 200);
         } catch (\Exception $e) {
             // Loguear el error
             Log::error('Error al obtener los registros: ' . $e->getMessage());
             return response()->json(['error' => 'Error al obtener los registros. '], 500);
         }
     }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
     /**
      * Update the specified resource in storage.
      */
     public function update(Request $request, $id)
     {
         
-
-        
-
         try {
             $User = User::findOrFail($id);
             $User->update($request->all());

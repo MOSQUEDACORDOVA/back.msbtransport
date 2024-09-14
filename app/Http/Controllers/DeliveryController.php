@@ -12,37 +12,22 @@ class DeliveryController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
         try {
             // Obtener los parámetros de paginación de la solicitud
-            $page = $request->query('page', 1); // Número de página, predeterminado es 1
             $perPage = $request->query('perPage', 10); // Cantidad de elementos por página, predeterminado es 10
-    
-            // Calcular el índice de inicio para la consulta
-            $startIndex = ($page - 1) * $perPage;
-    
-            // Obtener los registros paginados, 
-            // Ordenados por fecha de creación de forma descendente
-            $Users = Delivery::offset($startIndex)->limit($perPage)->get();
-
-    
-            // Retornar una respuesta con las ofertas de empleo paginadas
-            return response()->json(['data' => $Users], 200);
+        
+            // Obtener los registros paginados automáticamente
+            $users = Delivery::paginate($perPage);
+        
+            // Retornar la respuesta paginada
+            return response()->json($users, 200);
         } catch (\Exception $e) {
             // Loguear el error
             Log::error('Error al obtener los registros: ' . $e->getMessage());
             return response()->json(['error' => 'Error al obtener los registros. '], 500);
         }
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
     }
 
     /**
@@ -56,6 +41,7 @@ class DeliveryController extends Controller
             $Delivery = new Delivery();
             $Delivery->title = $request->title;
             $Delivery->location = $request->location;
+            $Delivery->id_user = $request->id_user;
             $Delivery->save();
 
             // Retorna una respuesta de éxito
@@ -83,12 +69,18 @@ class DeliveryController extends Controller
         //
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+    public function update(Request $request, $id)
     {
-        //
+        
+        try {
+            $Delivery = Delivery::findOrFail($id);
+            $Delivery->update($request->all());
+
+            return response()->json(['message' => 'Registro actualizado con éxito', 'data' => $Delivery], 200);
+        } catch (\Exception $e) {
+            Log::error('Error al actualizar registro: ' . $e->getMessage());
+            return response()->json(['error' => 'Error al actualizar registro'], 500);
+        }
     }
 
     /**
@@ -97,5 +89,14 @@ class DeliveryController extends Controller
     public function destroy(string $id)
     {
         //
+        try {
+            $Delivery = Delivery::findOrFail($id);
+            $Delivery->delete();
+
+            return response()->json(['message' => 'Registro eliminado con éxito'], Response::HTTP_OK);
+        } catch (\Exception $e) {
+            Log::error('Error al eliminar registro: ' . $e->getMessage());
+            return response()->json(['error' => 'Error al eliminar registro '], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
     }
 }
