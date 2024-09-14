@@ -15,19 +15,33 @@ class DeliveryController extends Controller
     public function index(Request $request)
     {
         try {
+            
+            // Obtener el usuario autenticado
+            $user = $request->user();
+
             // Obtener los parámetros de paginación de la solicitud
             $perPage = $request->query('perPage', 10); // Cantidad de elementos por página, predeterminado es 10
-        
-            // Obtener los registros paginados automáticamente
-            $users = Delivery::paginate($perPage);
-        
+
+            // Construir la consulta base
+            $query = Delivery::query();
+
+            // Si el usuario tiene 'type' 2, filtrar por 'id_user'
+            if ($user->type == 2) {
+                $query->where('id_user', $user->id);
+            }
+
+            // Obtener los registros paginados
+            $deliveries = $query->paginate($perPage);
+
             // Retornar la respuesta paginada
-            return response()->json($users, 200);
+            return response()->json($deliveries, 200);
+
         } catch (\Exception $e) {
             // Loguear el error
             Log::error('Error al obtener los registros: ' . $e->getMessage());
             return response()->json(['error' => 'Error al obtener los registros. '], 500);
         }
+
     }
 
     /**
@@ -37,11 +51,14 @@ class DeliveryController extends Controller
     {
 
         try {
+            // Obtener el usuario autenticado
+            $user = $request->user();
+
             // Crea una nueva oferta de trabajo
             $Delivery = new Delivery();
             $Delivery->title = $request->title;
             $Delivery->location = $request->location;
-            $Delivery->id_user = $request->id_user;
+            $Delivery->id_user = $user->id;
             $Delivery->save();
 
             // Retorna una respuesta de éxito
