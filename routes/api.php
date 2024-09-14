@@ -4,7 +4,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Response;
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\JobOffersController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\DeliveryController;
 
@@ -25,20 +24,19 @@ Route::middleware('auth:sanctum')->group(function () {
     //Ver usuarios
     Route::get('/users', [UserController::class, 'index']);
 
-    Route::put('/job-offers/{id}', [JobOffersController::class, 'update']);
+
+    //Crear registro
+    Route::post('/delivery', [DeliveryController::class, 'store']);
+    //Esitar registro
+    Route::put('/delivery/{id}', [DeliveryController::class, 'update']);
+    //Eliminar usuario
+    Route::delete('/delivery/{id}', [DeliveryController::class, 'destroy']);
 
 });
 //Crear usuario
 Route::post('/register', [AuthController::class, 'register']);
 
-//Crear registro
-Route::post('/delivery', [DeliveryController::class, 'store']);
+
 //Ver delivery
 Route::get('/delivery', [DeliveryController::class, 'index']);
-
-
-Route::post('/job-offers', [JobOffersController::class, 'store']);
-Route::get('/job-offers/search', [JobOffersController::class, 'search']);
-Route::delete('/job-offers/{id}', [JobOffersController::class, 'destroy']);
-
 
