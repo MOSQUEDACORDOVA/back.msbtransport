@@ -7,5 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class Delivery extends Model
 {
-    use HasFactory;
+    // Especifica la tabla asociada
+    protected $table = 'delivery';
 }

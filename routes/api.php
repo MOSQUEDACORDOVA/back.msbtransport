@@ -22,20 +22,20 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/users/{id}', [UserController::class, 'destroy']);
     //Crear usuario
     Route::post('/register', [AuthController::class, 'register']);
-
-    //Crear registro
-    Route::post('/delivery', [DeliveryController::class, 'store']);
-    //Ver delivery
-    Route::get('/delivery', [DeliveryController::class, 'index']);
-
+    //Ver usuarios
+    Route::get('/users', [UserController::class, 'index']);
 
     Route::put('/job-offers/{id}', [JobOffersController::class, 'update']);
 
 });
 //Crear usuario
 Route::post('/register', [AuthController::class, 'register']);
-//Ver usuarios
-Route::get('/users', [UserController::class, 'index']);
+
+//Crear registro
+Route::post('/delivery', [DeliveryController::class, 'store']);
+//Ver delivery
+Route::get('/delivery', [DeliveryController::class, 'index']);
+
 
 Route::post('/job-offers', [JobOffersController::class, 'store']);
 Route::get('/job-offers/search', [JobOffersController::class, 'search']);
