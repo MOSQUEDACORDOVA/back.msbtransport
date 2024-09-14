@@ -12,10 +12,10 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('delivery', function (Blueprint $table) {
-            $table->id(); // ID autoincremental
+            $table->id();
             $table->string('title');
             $table->string('location');
-            $table->timestamps(); // Campos de fecha de creación y actualización
+            $table->timestamps();
         });
     }
 
