@@ -15,6 +15,7 @@ Route::middleware('auth:sanctum')->group(function () {
         return $request->user();
     });
 
+    Route::middleware('auth:sanctum')->get('/check-session', [AuthController::class, 'checkSession']);
 
     //Crear registro
     Route::post('/delivery', [DeliveryController::class, 'store']);

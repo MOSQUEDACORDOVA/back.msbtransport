@@ -7,9 +7,28 @@ use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Facades\Auth;
+
 
 class AuthController extends Controller
 {
+    public function checkSession(Request $request)
+    {
+        if (Auth::guard('sanctum')->check()) {
+            $user = Auth::guard('sanctum')->user();
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Token is valid.',
+                'user' => $user
+            ], 200);
+        } else {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Unauthenticated.'
+            ], 401);
+        }
+    }
+    
     public function register(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -25,6 +44,7 @@ class AuthController extends Controller
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
+            // 'type' => 1,
             'password' => Hash::make($request->password),
         ]);
 
@@ -44,12 +64,13 @@ class AuthController extends Controller
 
         if (!auth()->attempt($request->only('email', 'password'))) {
             throw ValidationException::withMessages([
-                'email' => ['Credenciales incorrectas'],
+                // 'email' => ['Credenciales incorrectas'],
+                'email' => ['Invalid credentials, try again.'],
             ]);
         }
 
         $token = auth()->user()->createToken('auth_token')->plainTextToken;
 
-        return response()->json(['access_token' => $token, 'token_type' => 'Bearer']);
+        return response()->json(['access_token' => $token, 'token_type' => 'Bearer', 'user' => auth()->user()]);
     }
 }
