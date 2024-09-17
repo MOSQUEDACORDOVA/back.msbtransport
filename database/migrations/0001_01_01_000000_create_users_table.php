@@ -41,7 +41,7 @@ return new class extends Migration
         DB::table('users')->insert([
             'name' => 'Admin',
             'email' => 'admin@example.com',
-            'password' => Hash::make('password'), // Asegúrate de cambiar la contraseña por seguridad
+            'password' => Hash::make('1234'), // Asegúrate de cambiar la contraseña por seguridad
             'type' => 1,
             'created_at' => now(),
             'updated_at' => now(),
