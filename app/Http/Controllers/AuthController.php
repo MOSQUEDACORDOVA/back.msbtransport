@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail; // Importar Mail
+use App\Mail\SendUserPassword; // Importar el Mailable para el correo
 
 
 class AuthController extends Controller
@@ -48,7 +50,14 @@ class AuthController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
-        return response()->json(['message' => 'Usuario registrado con éxito'], 201);
+        // Enviar correo con la contraseña
+        try {
+            Mail::to($user->email)->send(new SendUserPassword($request->password));
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Usuario registrado, pero el correo no pudo enviarse', 'error' => $e->getMessage()], 500);
+        }
+
+        return response()->json(['message' => 'Usuario registrado con éxito y correo enviado'], 201);
     }
 
     public function login(Request $request)
