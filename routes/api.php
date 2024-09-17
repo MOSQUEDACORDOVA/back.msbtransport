@@ -26,6 +26,8 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Crear y editar usuario
     Route::middleware(CheckUserType::class)->group(function () {
+        //Crear usuario
+        Route::post('/register', [AuthController::class, 'register']);
         //Esitar Usuario
         Route::put('/users/{id}', [UserController::class, 'update']);
         //Crear usuario
@@ -40,9 +42,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/delivery', [DeliveryController::class, 'index']);
 
 });
-
-//Crear usuario
-Route::post('/register', [AuthController::class, 'register']);
 
 
 
